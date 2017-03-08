@@ -13,7 +13,7 @@ module Travis
         }
 
         MONO_VERSION_REGEXP = /^(\d{1})\.(\d{1,2})\.\d{1,2}$/
-        DOTNET_VERSION_REGEXP = /^\d{1}\.\d{1,2}\.\d{1,2}(?:-preview\d+(\.\d+)?(?:-\d)?-\d{6})?$/
+        DOTNET_VERSION_REGEXP = /^\d{1}\.\d{1,2}\.\d{1,2}(?:-(?:preview|rc)\d+(\.\d+)?(?:-\d)?-\d{6})?$/
 
         def configure
           super
@@ -188,7 +188,11 @@ View valid versions of \"dotnet\" at https://docs.travis-ci.com/user/languages/c
         end
 
         def dotnet_osx_url
-          return "https://dotnetcli.azureedge.net/dotnet/preview/Installers/#{config[:dotnet]}/dotnet-dev-osx-x64.#{config[:dotnet]}.pkg"
+          if config[:dotnet].include? "-preview"
+            return "https://dotnetcli.azureedge.net/dotnet/preview/Installers/#{config[:dotnet]}/dotnet-dev-osx-x64.#{config[:dotnet]}.pkg"
+          else
+            return "https://dotnetcli.azureedge.net/dotnet/Sdk/#{config[:dotnet]}/dotnet-dev-osx-x64.#{config[:dotnet]}.pkg"
+          end
         end
 
         def is_mono_version_valid?
